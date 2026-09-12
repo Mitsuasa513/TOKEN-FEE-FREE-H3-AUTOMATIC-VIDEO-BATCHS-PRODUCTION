@@ -120,13 +120,13 @@ JUST TELL YOUR AGENT THE PROMPT AND EXPAND YOUR IMAGINATION:)
 2. **Segment loop (xN)** — H3 generates a 5s video (864x480, 24fps) using the previous frame as irst_frame
 3. **Last-frame extraction** — OpenCV grabs the tail frame of each segment locally
 4. **Upload & chain** — the extracted frame is uploaded to the server as the next segment's input
-5. **Concat** — ffmpeg stitches all segments into one final MP4
-
-1. **关键帧生成** — ZIMAGE 根据 `image_prompt` 生成 1280x720 的静态图像
-2. **分段循环 (×N)** — H3 以上一帧作为 `first_frame`，生成 5 秒视频（864x480, 24fps）
-3. **尾帧提取** — OpenCV 在本地提取每段的最后一帧
-4. **上传 & 衔接** — 将提取的尾帧上传到服务器，作为下一段的输入
-5. **拼接** — ffmpeg 将所有片段拼接为一个完整的 MP4
+5. **Concat** — ffmpeg stitches all segments into one final MP4  
+  
+一、关键帧生成：ZIMAGE 根据 `image_prompt` 生成 1280x720 的静态图像  
+二、分段渲染：H3 以上一帧作为 `first_frame`，生成 5 秒视频（864x480, 24fps），根据用户需要生成视频  
+三、尾帧提取：OpenCV 在本地提取每段的最后一帧  
+四、上传视频：将提取的尾帧上传到服务器，作为下一段的输入  
+五、合并优化：将所有片段拼接为一个完整的 MP4  
 
 ## License / 许可证信息
 
