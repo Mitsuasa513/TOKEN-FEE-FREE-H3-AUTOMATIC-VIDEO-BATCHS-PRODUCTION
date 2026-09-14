@@ -13,7 +13,7 @@ import subprocess
 import uuid
 import argparse
 
-DEFAULT_SERVER = "http://192.168.1.162:8595"
+DEFAULT_SERVER = "http://127.0.0.1:8000"
 IMAGE_SIZE = (1280, 720)
 VIDEO_WIDTH = 864
 VIDEO_HEIGHT = 480
