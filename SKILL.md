@@ -15,7 +15,42 @@ Automated multi-segment video generation on a remote ComfyUI server.
 - User wants image-to-video with story continuity across segments
 - User mentions H3, MiniMax, ZIMAGE, or the video pipeline
 
+## First-Time Setup Check
+
+Before running the pipeline, verify ALL of the following in one pass:
+
+1. **Python 3.10+** — python --version
+2. **OpenCV** — python -c "import cv2; print(cv2.__version__)" (if missing: pip install opencv-python)
+3. **ffmpeg** — where ffmpeg (Windows) or which ffmpeg (Linux/Mac). If not found, STOP and ask user to install it. Do NOT guess paths.
+4. **ComfyUI server reachable** — curl -s http://SERVER:PORT/system_stats should return JSON. If it fails, STOP and ask user for the correct address.
+5. **GPU VRAM >= 8GB** — check via 
+vidia-smi or ComfyUI system_stats.
+6. **h3-prompt-writing skill installed** — verify the h3-prompt-writing skill exists (check ~/.agents/skills/h3-prompt-writing/SKILL.md or ~/.codex/skills/h3-prompt-writing/SKILL.md). All video segment prompts MUST be formatted through this skill before submission to H3. If missing, ask the user to install it: https://github.com/Mitsuasa513/h3-prompt-writing
+
+If any check fails, tell the user what's missing and how to fix it. Do not proceed.
+
+## Prompt Formatting (REQUIRED)
+
+Before submitting any video segment prompt to the H3 workflow, you MUST run it through the h3-prompt-writing skill to produce the correct integrated_multimodal_description + overall_soundscape + 
+on_diegetic_music structure. Plain freeform text will not produce quality results.
+
+Workflow:
+1. Write the raw narrative intent for each segment (e.g. "camera pans left, the warrior draws his sword")
+2. Invoke the h3-prompt-writing skill to reformat into H3-compatible structured prompt
+3. Use the formatted output as the prompt field in the MiniMaxH3ImageToVideo node
+
+This applies to ALL segments (1 through N). The ZIMAGE keyframe prompt does NOT need this formatting.
+
+## Server Address (IMPORTANT)
+
+**Do NOT assume a default server address.** On first use, ask the user:
+
+> "Is your ComfyUI running locally (e.g. http://127.0.0.1:8595) or on a remote machine? If remote, please provide the IP and port."
+
+Use the user's answer as the --server argument for all subsequent calls in the session.
+
 ## Architecture
+
 
 `
 [Local] --HTTP--> [ComfyUI Server]
