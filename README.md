@@ -4,7 +4,63 @@ Multi-segment AI video generation pipeline that runs on a ComfyUI server (remote
 🦉Currently directed by Qwen3 27B, with plans to test smaller models in the future.
 
 基于 ComfyUI 服务器（本地或远程）的多段式 AI 视频生成流水线。先用 ZIMAGE 工作流（你可以在COMFYUI模板找到）生成关键帧图像，再通过 MiniMax H3 依次生成 N 段连续视频（采用"尾帧衔接"保证剧情连贯），最后用 ffmpeg 自动拼接成完整视频。  
-🦉目前由Qwen3.8 27b担任导演，后续还将测试更小的模型尝试。
+🦉目前由Qwen3.8 27b担任导演，后续还将测试更小的模型尝试。9b以下模型别试了，替你们试过了，结果如下
+
+
+
+## 20260914 更新 / UPDATE
+
+## 9B模型导演争霸赛，赛事信息（欢迎投稿！目前9B以下模型全军覆没，有一个差一点坐上主任宝座）
+| 模型自动视频流水线导演车间主任争霸赛 | | |
+|:---:|:---:|:---|
+| **模型** | **结果** | **备注** |
+| Qwen3.5 9B | ❌ 失败 | 脚本启动就死循环 |
+| Qwen3-8B-instruct | ❌ 失败 | 无法调用 SKILL 工具 |
+| Qwen3.6-35B-A3B | ✅ 成功 | 完美运行 |
+| Qwen3.8 27B | ✅ 成功 | 完美运行 |
+| Ornith1.5-9B | ❌ 失败 | 差一点就成功了，视频生成轮询时死循环，9B 唯一离主任位置最近的 |
+| MiniCPM5-2B | ❌ 失败 | 一句"你好"就陷入死循环 |
+
+增加了以下内容，节约资源，提升性能，强调成功率（跑通才能赢）
+1. First-Time Setup Check（首次检查清单）
+- Python / OpenCV / ffmpeg / 网络 / VRAM 五项一次确认
+- 新增第 6 项：检查 h3-prompt-writing skill 是否已安装
+- 任何一项不满足就停下来告诉用户，不盲目跑
+2. Server Address（服务器地址询问）
+- 明确要求 Agent 首次使用时必须问用户：本地还是远程？IP 和端口？
+- 默认是127.0.0.1:8000
+3. Prompt Formatting (REQUIRED)（提示词格式化）
+- 写死规则：所有视频分段 prompt 必须先过 h3-prompt-writing skill 格式化
+- 生成 integrated_multimodal_description + overall_soundscape + non_diegetic_music 结构后再提交 H3
+- ZIMAGE 图片 prompt 不需要
+4. pipeline.py 两处代码修复
+- 轮询间隔 sleep(15) → sleep(180)（3分钟查一次，不再刷屏）
+- concat.txt 写入绝对路径（os.path.abspath），修掉之前路径错误导致 ffmpeg 找不到文件的问题
+
+Added the following to save resources and improve performance:
+
+1. First-Time Setup Check
+
+- One-pass verification of Python / OpenCV / ffmpeg / network / VRAM
+- Added item 6: verify the `h3-prompt-writing` skill is installed
+- If any check fails, stop and inform the user instead of proceeding blindly
+
+2. Server Address Prompt
+
+- Agent must ask on first use: local or remote? IP and port?
+- Default is `127.0.0.1:8000`
+
+3. Prompt Formatting (REQUIRED)
+
+- All video segment prompts must be formatted through the `h3-prompt-writing` skill before submission
+- Generates `integrated_multimodal_description` + `overall_soundscape` + `non_diegetic_music` structure before passing to H3
+- ZIMAGE keyframe prompt does not require this
+
+4. Two fixes in pipeline.py
+
+- Poll interval `sleep(15)` → `sleep(180)` (check every 3 min, no more spam)
+- `concat.txt` now uses absolute paths (`os.path.abspath`), fixing the issue where ffmpeg couldn't find files due to relative path errors
+
 
 ## Features / 特点
 
