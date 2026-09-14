@@ -10,7 +10,7 @@ Multi-segment AI video generation pipeline that runs on a ComfyUI server (remote
 
 ## 20260914 更新 / UPDATE
 
-### 模型自动视频流水线导演车间主任争霸赛
+### 模型自动视频流水线导演车间主任争霸赛（欢迎投稿！）
 
 | **模型** | **结果** | **备注** |
 |:---:|:---:|:---|
@@ -21,7 +21,7 @@ Multi-segment AI video generation pipeline that runs on a ComfyUI server (remote
 | Ornith1.5-9B | ❌ 失败 | 差一点就成功了，视频生成轮询时死循环，9B 唯一离主任位置最近的 |
 | MiniCPM5-2B | ❌ 失败 | 一句"你好"就陷入死循环 |
 
-### Model Auto-Video Pipeline: Director & Shop Foreman Battle Royale
+### Model Auto-Video Pipeline: Director & Shop Foreman Battle Royale (Contributions welcome!)
 
 | **Model** | **Result** | **Notes** |
 |:---:|:---:|:---|
