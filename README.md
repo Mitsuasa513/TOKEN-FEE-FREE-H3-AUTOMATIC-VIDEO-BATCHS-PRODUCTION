@@ -10,16 +10,27 @@ Multi-segment AI video generation pipeline that runs on a ComfyUI server (remote
 
 ## 20260914 更新 / UPDATE
 
-## 9B模型导演争霸赛，赛事信息（欢迎投稿！目前9B以下模型全军覆没，有一个差一点坐上主任宝座）
-| 模型自动视频流水线导演车间主任争霸赛 | | |
-|:---:|:---:|:---|
+### 模型自动视频流水线导演车间主任争霸赛
+
 | **模型** | **结果** | **备注** |
+|:---:|:---:|:---|
 | Qwen3.5 9B | ❌ 失败 | 脚本启动就死循环 |
 | Qwen3-8B-instruct | ❌ 失败 | 无法调用 SKILL 工具 |
 | Qwen3.6-35B-A3B | ✅ 成功 | 完美运行 |
 | Qwen3.8 27B | ✅ 成功 | 完美运行 |
 | Ornith1.5-9B | ❌ 失败 | 差一点就成功了，视频生成轮询时死循环，9B 唯一离主任位置最近的 |
 | MiniCPM5-2B | ❌ 失败 | 一句"你好"就陷入死循环 |
+
+### Model Auto-Video Pipeline: Director & Shop Foreman Battle Royale
+
+| **Model** | **Result** | **Notes** |
+|:---:|:---:|:---|
+| Qwen3.5 9B | ❌ Fail | Infinite loop on script startup |
+| Qwen3-8B-instruct | ❌ Fail | Unable to invoke SKILL tool |
+| Qwen3.6-35B-A3B | ✅ Pass | Flawless run |
+| Qwen3.8 27B | ✅ Pass | Flawless run |
+| Ornith1.5-9B | ❌ Fail | So close! Infinite loop during video polling — the closest 9B model to the foreman seat |
+| MiniCPM5-2B | ❌ Fail | Infinite loop on a simple "hello" |
 
 增加了以下内容，节约资源，提升性能，强调成功率（跑通才能赢）
 1. First-Time Setup Check（首次检查清单）
