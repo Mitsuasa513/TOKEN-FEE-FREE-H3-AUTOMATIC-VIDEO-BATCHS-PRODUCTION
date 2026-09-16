@@ -33,8 +33,8 @@ Multi-segment AI video generation pipeline that runs on a ComfyUI server (remote
 | Qwen3.8 27B | ✅ Pass | Flawless run |
 | Ornith1.5-9B | ❌ Fail | So close! Infinite loop during video polling — the closest 9B model to the foreman seat |
 | MiniCPM5-2B | ❌ Fail | Infinite loop on a simple "hello" |
-| Qwen3-4B | ❌ 失败 | The script keeps looping until it times out |
-| SparkX2.5-4B | ❌ 失败 | Can complete the H5 page, but the animation can't be generated |
+| Qwen3-4B | ❌ Fail | The script keeps looping until it times out |
+| SparkX2.5-4B | ❌ Fail | Can complete the H5 page, but the animation can't be generated |
 
 增加了以下内容，节约资源，提升性能，强调成功率（跑通才能赢）
 1. First-Time Setup Check（首次检查清单）
