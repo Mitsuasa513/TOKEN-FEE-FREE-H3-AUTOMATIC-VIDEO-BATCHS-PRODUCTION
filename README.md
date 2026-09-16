@@ -47,6 +47,9 @@ Multi-segment AI video generation pipeline that runs on a ComfyUI server (remote
 4. pipeline.py 两处代码修复
 - 轮询间隔 sleep(15) → sleep(180)（3分钟查一次，不再刷屏）
 - concat.txt 写入绝对路径（os.path.abspath），修掉之前路径错误导致 ffmpeg 找不到文件的问题
+5. config.json 可配置化
+- 节点类型和模型文件名不再硬编码，通过 config.json 适配不同服务器环境
+- SageAttention 兼容性说明：20/30/40/50 系显卡可启用加速，V100 等 Tesla 卡不支持
 
 Added the following to save resources and improve performance:
 
@@ -133,6 +136,7 @@ ALREADY INCLUDED IN THE _ComfyUI-MiniMax-H3-V100-Workflow_ 🐱
 - comfyui-minimax-h3-blockcache-T8
 - ComfyUI-VideoHelperSuite
 - ComfyUI-Manager (KJ)
+- ComfyUI-GGUF (KJ) — only if using GGUF quantized models
 这些加速节点已经在 _ComfyUI-MiniMax-H3-V100-Workflow_ 项目中了，直接加载工作流即可。🐱
 
 ## Quick Start / 快速开始
@@ -159,6 +163,7 @@ JUST TELL YOUR AGENT THE PROMPT AND EXPAND YOUR IMAGINATION:)
 | FPS | 24 | |
 | Frames per segment | 125 | = 5 seconds |
 | Sampling steps | 4 | LightX2V Turbo |
+| Poll interval | 180s | Check render status every 3 min |
 | head_chunks | 5 | critical for 8GB VRAM |
 
 | 参数             | 默认值    | 说明                        |
@@ -168,6 +173,7 @@ JUST TELL YOUR AGENT THE PROMPT AND EXPAND YOUR IMAGINATION:)
 | 帧率 (FPS)       | 24     |                           |
 | 每段帧数           | 125    | = 5 秒                     |
 | 采样步数           | 4      | LightX2V Turbo            |
+| 轮询间隔           | 180s   | 每3分钟检查一次渲染状态          |
 | head\_chunks   | 5      | 8GB 显存下的关键参数            |
 
 
@@ -177,6 +183,7 @@ JUST TELL YOUR AGENT THE PROMPT AND EXPAND YOUR IMAGINATION:)
 - scripts/pipeline.py — Main pipeline script (CLI + library)
 - references/models.md — Required models & VRAM settings
 - references/workflows.md — ComfyUI API node graphs
+- config.json — Server-specific node types & model filenames (edit to match your setup)
 - requirements.txt — Python dependencies
 - LICENSE — Apache 2.0
 - SAMPLE_IMAGES/ — Demo clips
