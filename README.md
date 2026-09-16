@@ -20,6 +20,8 @@ Multi-segment AI video generation pipeline that runs on a ComfyUI server (remote
 | Qwen3.8 27B | ✅ 成功 | 完美运行 |
 | Ornith1.5-9B | ❌ 失败 | 差一点就成功了，视频生成轮询时死循环，9B 唯一离主任位置最近的 |
 | MiniCPM5-2B | ❌ 失败 | 一句"你好"就陷入死循环 |
+| Qwen3 -4B | ❌ 失败 | 脚本启动就循环直到超时 |
+| Spark X2.5 -4b | ❌ 失败 | 可完成H5页面,动画无法生成 |
 
 ### Model Auto-Video Pipeline: Director & Shop Foreman Battle Royale (Contributions welcome!)
 
@@ -31,6 +33,8 @@ Multi-segment AI video generation pipeline that runs on a ComfyUI server (remote
 | Qwen3.8 27B | ✅ Pass | Flawless run |
 | Ornith1.5-9B | ❌ Fail | So close! Infinite loop during video polling — the closest 9B model to the foreman seat |
 | MiniCPM5-2B | ❌ Fail | Infinite loop on a simple "hello" |
+| Qwen3 -4B | ❌ 失败 | The script keeps looping until it times out |
+| Spark X2.5 -4b | ❌ 失败 | Can complete the H5 page, but the animation can't be generated. |
 
 增加了以下内容，节约资源，提升性能，强调成功率（跑通才能赢）
 1. First-Time Setup Check（首次检查清单）
