@@ -1,0 +1,15 @@
+{
+  "zimage": {
+    "unet_node_type": "UNETLoader",
+    "unet_input_key": "unet_name",
+    "unet_name": "z_image_turbo_bf16.safetensors",
+    "clip_node_type": "CLIPLoader",
+    "clip_input_key": "clip_name",
+    "clip_name": "qwen3_4b.safetensors",
+    "vae_name": "ae.safetensors"
+  },
+  "h3": {
+    "lora_node_type": "LoraLoader",
+    "lora_name": "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors"
+  }
+}

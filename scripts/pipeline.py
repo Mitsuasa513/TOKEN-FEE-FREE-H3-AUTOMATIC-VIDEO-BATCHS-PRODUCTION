@@ -14,6 +14,14 @@ import uuid
 import argparse
 
 DEFAULT_SERVER = "http://127.0.0.1:8000"
+def load_config():
+    """Load config.json from the skill root directory."""
+    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json")
+    if os.path.exists(config_path):
+        with open(config_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return None
+CONFIG = load_config() or {}
 IMAGE_SIZE = (1280, 720)
 VIDEO_WIDTH = 864
 VIDEO_HEIGHT = 480
@@ -61,8 +69,8 @@ def wait_for_completion(server, prompt_id, timeout=1200):
                 raise
         sys.stdout.write("  Rendering... %.0fs\r" % elapsed)
         sys.stdout.flush()
-        time.sleep(15)
-        elapsed += 15
+        time.sleep(180)
+        elapsed += 180
     raise Exception("Timeout after %ds" % timeout)
 
 
@@ -126,8 +134,8 @@ def extract_last_frame(video_path, output_png):
 def build_zimage_workflow(image_prompt, width=IMAGE_SIZE[0], height=IMAGE_SIZE[1]):
     return {
         "1": {"class_type": "VAELoader", "inputs": {"vae_name": "ae.safetensors"}},
-        "2": {"class_type": "UnetLoaderGGUF", "inputs": {"unet_name": "z_image_turbo-Q8_0.gguf"}},
-        "3": {"class_type": "CLIPLoaderGGUF", "inputs": {"clip_name": "Qwen3-8B-Hivemind-Inst-Hrtic-Ablit-Uncensored-Q4_K_M-imat.gguf", "type": "stable_diffusion"}},
+        "2": {"class_type": CONFIG.get("zimage", {}).get("unet_node_type", "UNETLoader"), "inputs": {CONFIG.get("zimage", {}).get("unet_input_key", "unet_name"): CONFIG.get("zimage", {}).get("unet_name", "z_image_turbo_bf16.safetensors"}}},
+        "3": {"class_type": CONFIG.get("zimage", {}).get("clip_node_type", "CLIPLoader"), "inputs": {CONFIG.get("zimage", {}).get("clip_input_key", "clip_name"): CONFIG.get("zimage", {}).get("clip_name", "qwen3_4b.safetensors"), "type": "stable_diffusion"}},
         "4": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["3", 0], "text": image_prompt}},
         "5": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["3", 0], "text": NEGATIVE_PROMPT}},
         "6": {"class_type": "ModelSamplingAuraFlow", "inputs": {"model": ["2", 0], "shift": 3.0}},
@@ -146,7 +154,7 @@ def build_h3_workflow(first_frame_ref, prompt, seed_offset=0, width=VIDEO_WIDTH,
         "5": {"class_type": "UNETLoader", "inputs": {"unet_name": "minimax_h3_fl2va_pruned_int8_convrot.safetensors", "weight_dtype": "default"}},
         "6": {"class_type": "PathchSageAttentionKJ", "inputs": {"model": ["5", 0], "sage_attention": "auto", "allow_compile": False}},
         "7": {"class_type": "ModelPatchTorchSettings", "inputs": {"model": ["6", 0], "enable_fp16_accumulation": True}},
-        "8": {"class_type": "LoraLoaderInt8ConvRot", "inputs": {"model": ["7", 0], "lora_name": "minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_int8convrot.safetensors", "strength_model": 1.0}},
+        "8": {"class_type": CONFIG.get("h3", {}).get("lora_node_type", "LoraLoader"), "inputs": {"model": ["7", 0], "lora_name": CONFIG.get("h3", {}).get("lora_name", "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors"), "strength_model": 1.0}},
         "9": {"class_type": "MiniMaxChunkFeedForward", "inputs": {"model": ["8", 0], "chunks": 2, "seq_threshold": 4096}},
         "10": {"class_type": "MiniMaxLowVRAMAttention", "inputs": {"model": ["9", 0], "head_chunks": 5}},
         "11": {"class_type": "MiniMaxH3BlockCacheT8", "inputs": {"model": ["10", 0], "residual_diff_threshold": 0.12, "start_percent": 0.08, "end_percent": 0.95, "max_consecutive_hits": 2, "cache_device": "cpu", "metric_stride": 8, "verbose": False}},
@@ -216,7 +224,7 @@ def run_pipeline(server, image_prompt, video_prompts, output_dir="./output", ffm
     concat = os.path.join(output_dir, "concat.txt")
     with open(concat, "w") as f:
         for v in video_locals:
-            f.write("file '%s'\n" % v.replace("\\", "/"))
+            f.write("file '%s'\n" % os.path.abspath(v).replace("\\", "/"))
     final = os.path.join(output_dir, "pipeline-final.mp4")
     cmd = [ffmpeg_path, "-f", "concat", "-safe", "0", "-i", concat, "-c", "copy", "-y", final]
     r = subprocess.run(cmd, capture_output=True, text=True)

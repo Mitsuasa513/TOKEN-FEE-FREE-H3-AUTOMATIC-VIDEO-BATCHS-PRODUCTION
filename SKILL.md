@@ -25,9 +25,24 @@ Before running the pipeline, verify ALL of the following in one pass:
 4. **ComfyUI server reachable** — curl -s http://SERVER:PORT/system_stats should return JSON. If it fails, STOP and ask user for the correct address.
 5. **GPU VRAM >= 8GB** — check via 
 vidia-smi or ComfyUI system_stats.
-6. **h3-prompt-writing skill installed** — verify the h3-prompt-writing skill exists (check ~/.agents/skills/h3-prompt-writing/SKILL.md or ~/.codex/skills/h3-prompt-writing/SKILL.md). All video segment prompts MUST be formatted through this skill before submission to H3. If missing, ask the user to install it: https://github.com/Mitsuasa513/h3-prompt-writing
+6. **h3-prompt-writing skill installed** — verify the h3-prompt-writing skill exists (check ~/.agents/skills/h3-prompt-writing/SKILL.md or ~/.codex/skills/h3-prompt-writing/SKILL.md). All video segment prompts MUST be formatted through this skill before submission to H3. If missing, ask the user to install it: https://github.com/MiniMax-AI/MiniMax-H3/tree/main/skills/h3-prompt-writing
+
+7. **config.json matches your server** — open config.json in the skill root and verify that the model filenames and node types match what's actually on your ComfyUI server. Check via ComfyUI web UI or GET /object_info.
 
 If any check fails, tell the user what's missing and how to fix it. Do not proceed.
+
+## Configuration (config.json)
+
+This skill uses a config.json file to adapt to different server setups. Before first use, verify and adjust:
+
+- zimage.unet_node_type — e.g. "UNETLoader" (standard) or "UnetLoaderGGUF" (KJ GGUF plugin)
+- zimage.unet_name — your ZIMAGE UNET filename
+- zimage.clip_node_type — e.g. "CLIPLoader" or "CLIPLoaderGGUF"
+- zimage.clip_name — your CLIP/text encoder filename
+- h3.lora_node_type — e.g. "LoraLoader" (standard) or "LoraLoaderInt8ConvRot" (custom)
+- h3.lora_name — your H3 LoRA filename
+
+The defaults in the file are for a **standard bf16 setup**. If your server uses GGUF quantized models or custom LoRA loaders, update the values accordingly.
 
 ## Prompt Formatting (REQUIRED)
 
@@ -108,6 +123,7 @@ python scripts/pipeline.py \
 - Video: **864x480**, 24fps, **125 frames/segment** (5s)
 - H3 acceleration: MiniMaxLowVRAMAttention head_chunks=5, BlockCacheT8, ChunkFeedForward
 - 4-step sampling with LightX2V Turbo LoRA
+- **SageAttention**: if the GPU is RTX 20/30/40/50 series (e.g. 2080, 3060, 4090, 5060), enable SageAttention for extra speed. V100 and older Tesla cards do NOT support it — skip.
 - **Interrupt between segments** to free VRAM
 - **Last-frame chaining**: extract tail frame via OpenCV, upload, use as next first_frame
 
